@@ -1,0 +1,14 @@
+{
+	"id" : "atome",
+	"name" : "Atome",
+	"licence" : "AGPL",
+	"author" : "G0li4th",
+	"require" : "3.0",
+    "version": "1.0",
+	"category" : "energy",
+	"hasDependency" : false,
+	"hasOwnDeamon" : false,
+	"maxDependancyInstallTime" : 0,
+    "documentation": "https://github.com/Gougliath/atome4Jeedom",
+    "changelog": "https://github.com/Gougliath/atome4Jeedom"
+}
