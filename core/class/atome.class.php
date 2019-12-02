@@ -35,19 +35,23 @@
 		const API_PERIOD = array(
 								"sod" => array(
 											array("id" => "consoKwhCurrentDay", "cmdName" => "Consommation", "unite" => "kWh", "type" => "info", "subType" => "numeric", "isHistorized" => 0, "eventOnly" => 1, "roundRule" => 2),
-											array("id" => "consoEuroCurrentDay", "cmdName" => "Coût", "unite" => "Eur", "type" => "info", "subType" => "numeric", "isHistorized" => 0, "eventOnly" => 1, "roundRule" => 2)
+											array("id" => "consoEuroCurrentDay", "cmdName" => "Coût", "unite" => "Eur", "type" => "info", "subType" => "numeric", "isHistorized" => 0, "eventOnly" => 1, "roundRule" => 2),
+											array("id" => "impactCo2CurrentDay", "cmdName" => "CO2", "unite" => "Kg", "type" => "info", "subType" => "numeric", "isHistorized" => 0, "eventOnly" => 1, "roundRule" => 0)
 										),
 								"sow" => array(
 											array("id" => "consoKwhCurrentWeek", "cmdName" => "Conso Semaine", "unite" => "kWh", "type" => "info", "subType" => "numeric", "isHistorized" => 0, "eventOnly" => 1, "roundRule" => 0),
-											array("id" => "consoEuroCurrentWeek", "cmdName" => "Coût Semaine", "unite" => "Eur", "type" => "info", "subType" => "numeric", "isHistorized" => 0, "eventOnly" => 1, "roundRule" => 2)
+											array("id" => "consoEuroCurrentWeek", "cmdName" => "Coût Semaine", "unite" => "Eur", "type" => "info", "subType" => "numeric", "isHistorized" => 0, "eventOnly" => 1, "roundRule" => 2),
+											array("id" => "impactCo2CurrentWeek", "cmdName" => "CO2 Semaine", "unite" => "Kg", "type" => "info", "subType" => "numeric", "isHistorized" => 0, "eventOnly" => 1, "roundRule" => 0)
 										),
 								"som" => array(
 											array("id" => "consoKwhCurrentMonth", "cmdName" => "Conso Mois", "unite" => "kWh", "type" => "info", "subType" => "numeric", "isHistorized" => 0, "eventOnly" => 1, "roundRule" => 0),
-											array("id" => "consoEuroCurrentMonth", "cmdName" => "Coût Mois", "unite" => "Eur", "type" => "info", "subType" => "numeric", "isHistorized" => 0, "eventOnly" => 1, "roundRule" => 0)
+											array("id" => "consoEuroCurrentMonth", "cmdName" => "Coût Mois", "unite" => "Eur", "type" => "info", "subType" => "numeric", "isHistorized" => 0, "eventOnly" => 1, "roundRule" => 0),
+											array("id" => "impactCo2CurrentMonth", "cmdName" => "CO2 Mois", "unite" => "Kg", "type" => "info", "subType" => "numeric", "isHistorized" => 0, "eventOnly" => 1, "roundRule" => 0)
 										), 
 								"soy" => array(
 											array("id" => "consoKwhCurrentYear", "cmdName" => "Conso Année", "unite" => "kWh", "type" => "info", "subType" => "numeric", "isHistorized" => 0, "eventOnly" => 1, "roundRule" => 0),
-											array("id" => "consoEuroCurrentYear", "cmdName" => "Coût Année", "unite" => "Eur", "type" => "info", "subType" => "numeric", "isHistorized" => 0, "eventOnly" => 1, "roundRule" => 0)
+											array("id" => "consoEuroCurrentYear", "cmdName" => "Coût Année", "unite" => "Eur", "type" => "info", "subType" => "numeric", "isHistorized" => 0, "eventOnly" => 1, "roundRule" => 0),
+											array("id" => "impactCo2CurrentYear", "cmdName" => "CO2 Année", "unite" => "Kg", "type" => "info", "subType" => "numeric", "isHistorized" => 0, "eventOnly" => 1, "roundRule" => 0)
 										)
 							);
 		
@@ -226,7 +230,7 @@
 				$consoPrice = $jsonDataResponse->price;
 				$consoStart = $jsonDataResponse->startPeriod;
 				$consoEnd = $jsonDataResponse->endPeriod;
-				$consoImpactCO2 = $jsonDataResponse->impactCo2;
+				$consoImpactCO2 = $jsonDataResponse->impactCo2 / 1000;
 				log::add("atome", "info", "Consumption :: consoTime=[".$consoTime."], consoTotal=[".$consoTotal."], consoPrice=[".$consoPrice."], consoStart=[".$consoStart."], consoEnd=[".$consoEnd."], consoImpactCO2=[".$consoImpactCO2."]");
 				
                 $startDate = new DateTime($consoTime);
@@ -235,6 +239,8 @@
 						$this->getCmd(null, $command["id"])->event(round($consoPrice, $command["roundRule"], PHP_ROUND_HALF_UP), $startDate->format($dateFormat));
 					} else if ($command["unite"] === "kWh") {
 						$this->getCmd(null, $command["id"])->event(round($consoTotal, $command["roundRule"], PHP_ROUND_HALF_UP), $startDate->format($dateFormat));
+					} else if ($command["unite"] === "Kg") {
+						$this->getCmd(null, $command["id"])->event(round($consoImpactCO2, $command["roundRule"], PHP_ROUND_HALF_UP), $startDate->format($dateFormat));
 					} else {
 						;
 					}
